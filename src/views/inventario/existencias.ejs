@@ -1,0 +1,31 @@
+<!-- MVC-LP-06 - Vista existencias.ejs (HU-LP-01). Incluye los formularios de lote (HU-LP-02) y de nuevo pedido (HU-LP-04). -->
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><title>LOGISTPULSE - Existencias</title>
+<style>body{font-family:Arial,sans-serif;max-width:960px;margin:2rem auto;padding:0 1rem;color:#222}h1{color:#1f3864}table{border-collapse:collapse;width:100%;margin:1rem 0}th,td{border:1px solid #bbb;padding:.4rem .6rem;text-align:left}th{background:#d9e2f3}.error{background:#fde8e8;border-left:4px solid #c0392b;padding:.6rem 1rem}.ok{background:#e7f6ec;border-left:4px solid #2e8b57;padding:.6rem 1rem}fieldset{margin:1rem 0}input,button{padding:.35rem;margin:.15rem}a{color:#2e5597}</style></head><body>
+<h1>LOGISTPULSE &middot; Inventario</h1>
+<form method="get" action="/inventario">
+  Producto (SKU) <input name="producto" value="<%= (locals.filtros && filtros.producto) || '' %>" size="10">
+  Ubicacion <input name="ubicacion" value="<%= (locals.filtros && filtros.ubicacion) || '' %>" size="10">
+  <button type="submit">Consultar</button>
+</form>
+<% if (locals.error) { %><div class="error"><strong><%= error %></strong></div><% } %>
+<% if (locals.existencias) { %>
+<table><tr><th>SKU</th><th>Producto</th><th>Lote</th><th>Vence</th><th>Ubicacion</th><th>Cantidad</th><th>Reservada</th><th>Disponible</th></tr>
+<% existencias.forEach(function(e){ %>
+<tr><td><%= e.sku %></td><td><%= e.producto %></td><td><%= e.lote %></td><td><%= e.fecha_vencimiento %></td><td><%= e.ubicacion %></td>
+<td><%= e.cantidad %></td><td><%= e.cantidad_reservada %></td><td><strong><%= e.cantidad_disponible %></strong></td></tr>
+<% }) %></table>
+<% } %>
+<fieldset><legend>Registrar lote (HU-LP-02)</legend>
+<form method="post" action="/lotes">
+  SKU <input name="sku" value="SKU-001" size="8"> Lote <input name="codigo_lote" size="10">
+  Ubicacion <input name="ubicacion" value="A-01-01" size="8"> Cantidad <input name="cantidad" value="10" size="4">
+  Vencimiento <input type="date" name="fecha_vencimiento"> <button type="submit">Registrar</button>
+</form></fieldset>
+<fieldset><legend>Nuevo pedido (HU-LP-04)</legend>
+<form method="post" action="/pedidos">
+  Cliente <input name="cliente" value="CLI-001" size="8"><br>
+  SKU <input name="sku" value="SKU-001" size="8"> Cantidad <input name="cantidad" value="2" size="4"><br>
+  SKU <input name="sku" size="8"> Cantidad <input name="cantidad" size="4"> <button type="submit">Crear pedido</button>
+</form></fieldset>
+</body></html>
