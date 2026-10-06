@@ -1,0 +1,49 @@
+# LOGISTPULSE - entorno local: SVC-LP-01 (logistpulse-api) + SVC-LP-02 (logistpulse-db)
+name: logistpulse
+
+services:
+  logistpulse-db:
+    image: postgres:16-alpine
+    container_name: logistpulse-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-logistpulse}
+      POSTGRES_USER: ${DB_USER:-logistpulse_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Defina DB_PASSWORD en el archivo .env (copie .env.example)}
+    volumes:
+      - logistpulse_pgdata:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    # La base de datos NO se publica al host: solo la API la alcanza por la red interna de Compose.
+
+  logistpulse-api:
+    build: .
+    container_name: logistpulse-api
+    restart: unless-stopped
+    ports:
+      - "${API_PORT:-3002}:3000"
+    environment:
+      PORT: 3000
+      DB_HOST: logistpulse-db
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME:-logistpulse}
+      DB_USER: ${DB_USER:-logistpulse_user}
+      DB_PASSWORD: ${DB_PASSWORD:?Defina DB_PASSWORD en el archivo .env (copie .env.example)}
+    depends_on:
+      logistpulse-db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+volumes:
+  logistpulse_pgdata:
+    name: logistpulse_pgdata
