@@ -1,0 +1,17 @@
+{
+  "name": "logistpulse-app",
+  "version": "1.0.0",
+  "description": "LOGISTPULSE: gestion de pedidos y logistica (MVC, Node.js, PostgreSQL, Docker).",
+  "private": true,
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "smoke": "node scripts/smoke.js all"
+  },
+  "engines": { "node": ">=20" },
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^4.19.2",
+    "pg": "^8.12.0"
+  }
+}
