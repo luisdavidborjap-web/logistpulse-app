@@ -1,18 +1,14 @@
-<!-- MVC-LP-07 - Vista lotes.ejs (HU-LP-02): resultado del registro de un lote -->
+<!-- MVC-LP-08 - Vista pedido_nuevo.ejs (HU-LP-04): resultado de crear un pedido con reserva -->
 <!DOCTYPE html>
-<html lang="es"><head><meta charset="utf-8"><title>LOGISTPULSE - Lote</title>
+<html lang="es"><head><meta charset="utf-8"><title>LOGISTPULSE - Nuevo pedido</title>
 <style>body{font-family:Arial,sans-serif;max-width:960px;margin:2rem auto;padding:0 1rem;color:#222}h1{color:#1f3864}table{border-collapse:collapse;width:100%;margin:1rem 0}th,td{border:1px solid #bbb;padding:.4rem .6rem;text-align:left}th{background:#d9e2f3}.error{background:#fde8e8;border-left:4px solid #c0392b;padding:.6rem 1rem}.ok{background:#e7f6ec;border-left:4px solid #2e8b57;padding:.6rem 1rem}fieldset{margin:1rem 0}input,button{padding:.35rem;margin:.15rem}a{color:#2e5597}</style></head><body>
-<h1>Registro de lote</h1>
+<h1>Nuevo pedido</h1>
 <% if (locals.error) { %><div class="error"><strong><%= error %></strong><ul><% (locals.detalle || []).forEach(function(d){ %><li><%= d %></li><% }) %></ul></div><% } %>
-<% if (locals.lote) { %>
-<div class="ok">Lote registrado correctamente.</div>
-<table>
-<tr><th>SKU</th><td><%= lote.sku %></td></tr>
-<tr><th>Lote</th><td><%= lote.codigo_lote %></td></tr>
-<tr><th>Vencimiento</th><td><%= lote.fecha_vencimiento %></td></tr>
-<tr><th>Ubicacion</th><td><%= lote.ubicacion %></td></tr>
-<tr><th>Cantidad en la ubicacion</th><td><%= existencia.cantidad %> (disponible <%= existencia.cantidad_disponible %>)</td></tr>
-</table>
+<% if (locals.pedido) { %>
+<div class="ok">Pedido #<%= pedido.id %> creado en estado <strong><%= pedido.estado %></strong>. Las existencias quedaron reservadas.</div>
+<table><tr><th>SKU</th><th>Producto</th><th>Cantidad</th></tr>
+<% pedido.lineas.forEach(function(l){ %><tr><td><%= l.sku %></td><td><%= l.producto %></td><td><%= l.cantidad %></td></tr><% }) %></table>
+<form method="post" action="/pedidos/<%= pedido.id %>/preparar"><button type="submit">Preparar pedido</button></form>
 <% } %>
 <p><a href="/inventario">&larr; Volver al inventario</a></p>
 </body></html>
